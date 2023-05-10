@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import (HomePageView, ItemList, ItemDetail, ItemDetailNonAccess, ItemCreate, ItemEdit, ItemDelete, ReplyList, MySalesList,
+from .views import (HomePageView, ItemList, ItemDetail, ItemDetailNonAccess, ItemCreate, ItemEdit, ItemDelete,
+                    ReplyList, MySalesList,
                     MyPurchasesList,
                     accept_reply, delete_reply, reject_reply, ReplyEdit, mail_code)
 

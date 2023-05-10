@@ -6,6 +6,7 @@ from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
 from django.views.generic.edit import FormMixin
 from django.http import Http404, HttpResponseForbidden
