@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Item
+{% endblock title %}
+
+
+{% block content %}
+    <h3>Продавец: {{item.user}}</h3>
+    <h4>Заголовок: {{item.header|capfirst}}</h4>
+    <h4>Категория: {{item.category.get}}</h4>
+    <span>Дата объявления: {{ item.date|date:'d.m.Y' }}</span>
+<hr width="1150" style="border: 2px solid blue;">
+    <img src="{{item.image.url}}" alt="item" width="650" height="500">
+<p><h4>Описание:</h4></p>
+<p>{{item.description|capfirst}}</p>
+<p style="font-size: 1.5em;"><span style="text-decoration: underline;">Вы не можете оставлять отклики пока не зарегистрируйтесь на сайте</span></p>
+{% endblock content %}

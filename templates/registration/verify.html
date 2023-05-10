@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+{% if not user.profile.is_confirmed %}
+    <h5>{{user.username}}</h5>
+    <p>{{user.id}}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Confirm">
+    </form>
+
+    <p>{{message}}</p>
+{% else %}
+    <p>Ваш аккаунт уже подтвержден</p>
+{% endif %}
+
+{% endblock content %}

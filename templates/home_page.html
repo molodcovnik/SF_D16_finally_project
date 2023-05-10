@@ -1,0 +1,34 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Home page
+{% endblock title %}
+
+{% block content %}
+  <h1>Добро пожаловать</h1>
+  <h3>Топ-3 самых желанных лота</h3>
+<hr width="1150" style="border: 2px solid blue;">
+{% if replies %}
+  {% for reply in replies %}
+    <h4>{{ reply.item__header|capfirst }}</h4>
+    <p style="color: #808080;">Дата размещения объявления: {{ reply.item__date|date:'d.m.Y' }} </p>
+    <img src="/media/{{ reply.item__image }}" alt="item" width="500" height="300" align="top" vspace="10px">
+    <p style="font-size: 1.2em;">Описание: </p>
+    <p style="font-size: 1.2em;" >{{ reply.item__description|capfirst }}</p>
+  {% if user.is_authenticated %}
+  <span class="text-left"><a href="{%url 'item_detail' pk=reply.item__id %}" class="btn btn-info">Смотреть</a></span>
+  {% else %}
+  <span class="text-left"><a href="{% url 'item_detail_non_access' pk=reply.item__id %}" class="btn btn-info">Смотреть</a></span>
+  <span class="text-left"><a href="/accounts/signup" class="btn btn-warning">Зарегистрироваться</a></span>
+  {% endif %}
+  <span></span>
+    <hr width="1150" style="border: 2px solid blue;">
+  {% endfor %}
+{% else %}
+<h4>Рейтинг еще не успел сформироваться...</h4>
+{% endif %}
+
+{% endblock content %}
+
+
+<!--<td><a href="{% url 'post_detail' pk=post.id %}">Читать</a></td>-->

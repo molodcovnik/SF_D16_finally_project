@@ -1,0 +1,68 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Item
+{% endblock title %}
+
+
+{% block content %}
+    <h3>Продавец: {{item.user}}</h3>
+    <h4>Заголовок: {{item.header|capfirst}}</h4>
+    <h4>Категория: {{item.category.get}}</h4>
+    <span>Дата объявления: {{ item.date|date:'d.m.Y' }}</span>
+<hr width="1150" style="border: 2px solid blue;">
+    <img src="{{item.image.url}}" alt="item" width="650" height="500">
+<p><h4>Описание:</h4></p>
+<p>{{item.description|capfirst}}</p>
+<hr width="1150" style="border: 2px solid blue;">
+{% if request.user == item.user %}
+<p>Количество откликов: <b>{{count}}</b></p>
+{% endif %}
+{% if request.user == item.user %}
+    <span class="text-left"><a href="{% url 'item_edit' pk=item.id %}" class="btn btn-warning">Редактировать</a></span>
+    <span class="text-left"><a href="{% url 'item_delete' pk=item.id %}" class="btn btn-danger">Удалить</a></span>
+    {% if replies%}
+        {% for reply in replies %}
+        <hr width="1150" style="border: 2px solid blue;">
+        <p>Покупатель: {{reply.user}} Дата отклика: {{reply.date|date:'d.m.Y'}}</p>
+        <h5>Предложение:</h5>
+        <h5>{{ reply.text }}</h5>
+        {% if not reply.accepted %}
+            <span class="text-left"><a href="{% url 'accept_reply' reply.id %}" class="btn btn-success">Принять</a></span>
+            <span class="text-left"><a href="{% url 'delete_reply' reply.id %}" class="btn btn-danger">Отклонить</a></span>
+        {% else %}
+            <p class="text-left"><a href="{% url 'delete_reply' reply.id %}" class="btn btn-danger">Отклонить</a></p>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+    <hr width="1150" style="border: 2px solid blue;">
+    <h4>Нет откликов</h4>
+    {% endif %}
+
+{% endif %}
+{% if count_user == 0 %}
+{% if user.is_authenticated and request.user != item.user %}
+<div class="col-7">
+    <form action="" id="add_reply" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+    </form>
+</div>
+<button form="add_reply" type="submit" class="btn btn-success">Откликнуться</button>
+{% endif %}
+{% endif %}
+{% if reply_user %}
+<p style="font-size: 1.5em;"><span style="text-decoration: underline;">Ваш отклик</span></p>
+{% for reply in reply_user %}
+    <p>{{ reply.user }} {{reply.date|date:'d.m.Y' }}</p>
+    <h5>{{reply.text }}</h5>
+    {% if reply.accepted %}
+        <td><h5><font color="green">Принят</font></h5></td>
+    {% else %}
+        <span class="text-left"><a href="{% url 'reply_edit' reply.id %}" class="btn btn-success">Редактировать</a></span>
+        <td><h5><font color="color: #993300;">Еще не принят...</font></h5></td>
+    {% endif %}
+{% endfor %}
+{% endif %}
+
+{% endblock content %}

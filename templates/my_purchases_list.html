@@ -1,0 +1,45 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+My Items
+{% endblock title %}
+
+{% block content %}
+<h1>Мои покупки:</h1>
+<p style="font-size: 1.5em;"><span style="text-decoration: underline;">На этой странице находятся все объявления на которые вы откликнулись. Здесь вы можете увидеть приняли Ваше предложение или нет</span></p>
+<hr width="1150" style="border: 2px solid blue;">
+{% if replies %}
+<table>
+    <tr>
+        <td><h4>Дата объявления</h4></td>
+        <td><h4>Заголовок</h4></td>
+        <td><h4>Описание</h4></td>
+        <td><h4>Продавец</h4></td>
+        <td><h4>Категория</h4></td>
+        <td><h4>Действия</h4></td>
+        <td><h4>Дата отклика</h4></td>
+        <td><h5>Текст отзыва</h5></td>
+        <td><h4>Статус</h4></td>
+    </tr>
+    {% for reply in replies %}
+    <tr>
+        <td>{{ reply.item.date|date:'d.m.Y' }}</td>
+        <td><strong>{{reply.item.header|capfirst|truncatewords:5}}</strong></td>
+        <td><font size="4">{{reply.item.description|capfirst|truncatewords:10}}</font></td>
+        <td><strong>{{reply.item.user}}</strong></td>
+        <td class="text-center"><font size="4"><b>{{reply.item.category.get}}</b></font></td>
+        <td><span class="text-left"><a href="{% url 'item_detail' pk=reply.item.id %}" class="btn btn-info">Читать</a></span></td>
+        <td>{{ reply.date|date:'d.m.Y' }}</td>
+        <td><strong>{{reply.text|capfirst|truncatewords:3}}</strong></td>
+        {% if reply.accepted %}
+        <td><h5><font color="green">Принят</font></h5></td>
+        {% else %}
+        <td><h5><font color="red">Не принят</font></h5></td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </table>
+{% else %}
+<h4>Вы еще ни на что не откликались</h4>
+{% endif %}
+{% endblock content %}

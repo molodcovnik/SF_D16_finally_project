@@ -1,0 +1,84 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_tags %}
+{% block title %}
+Items
+{% endblock title %}
+
+{% block content %}
+    <h1>Все объявления</h1>
+    <hr width="1150" style="border: 2px solid blue;">
+    {% if user.is_authenticated and user.profile.is_confirmed == True %}
+        <p class="text-left"><a href="{% url 'item_create'%}" class="btn btn-info">Создать объявление</a></p>
+    {% else %}
+        <p class="text-left"><a href="{% url 'item_create'%}" class="btn btn-info disabled" >Создать объявление</a></p>
+        <h5>Вы не можете создавать объявления пока не зарегистрируйтесь и завершите процесс подтверждения почты</h5>
+        <p class="text-left"><a href="{% url 'verify_account'%}" class="btn btn-secondary" >Подтвердите аккаунт</a></p>
+
+    {% endif %}
+
+
+<form action="" id="search_filter" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+    <button form="search_filter" type="submit" class="btn btn-success">Поиск</button>
+</form>
+
+
+    {% if items %}
+        <table>
+            <tr>
+                <td><h4>Заголовок</h4></td>
+                <td><h4>Продавец</h4></td>
+                <td><h4>Описание</h4></td>
+                <td><h4>Дата</h4></td>
+                <td><h4>Категория</h4></td>
+                <td><h4>Действия</h4></td>
+            </tr>
+        {% for item in items %}
+            <tr>
+                <td><strong>{{item.header|capfirst|truncatewords:2 }}</strong></td>
+                <td><font size="4">{{item.user}}</font></td>
+                <td><font size="4">{{item.description|capfirst|truncatewords:5}}</font></td>
+                <td><font size="4">{{item.date|date:'d.m.Y'}}</font></td>
+                <td class="text-center"><font size="4"><b>{{item.category.get}}</b></font></td>
+                <td>
+                    {% if user.is_authenticated %}
+                    <span class="text-left"><a href="{% url 'item_detail' pk=item.id %}" class="btn btn-info">Читать</a></span>
+                    {% else %}
+                    <span class="text-left"><a href="{% url 'item_detail_non_access' pk=item.id %}" class="btn btn-info">Читать</a></span>
+                    {% endif %}
+                    {% if request.user == item.user %}
+                    <span class="text-left"><a href="{% url 'item_edit' pk=item.id %}" class="btn btn-warning">Редактировать</a></span>
+                    <span class="text-left"><a href="{% url 'item_delete' pk=item.id %}" class="btn btn-danger">Удалить</a></span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+            </table>
+    {% else %}
+        <h4>Нет объявлений</h4>
+    {% endif %}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+    {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% url_replace page=1 %}">1</a></li>
+        {%if page_obj.previous_page_number != 1%}
+
+            <li class="page-item"><a class="page-link" href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a></li>
+        {%endif%}
+    {%endif%}
+
+    <li class="page-item"><a class="page-link">{{page_obj.number}}</a></li>
+
+    {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?{% url_replace page=page_obj.next_page_number %}" > {{ page_obj.next_page_number }}</a></li>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+
+            <li class="page-item"><a class="page-link" href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a></li>
+        {% endif %}
+    {% endif %}
+    </ul>
+</nav>
+{% endblock content %}
