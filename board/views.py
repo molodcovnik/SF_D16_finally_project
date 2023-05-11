@@ -16,6 +16,7 @@ from .models import Item, Category, Reply, ItemCategory
 from .forms import ItemForm, ReplyForm
 from .filters import ItemFilter, ReplyFilter
 from accounts.signals import random_code
+from .tasks import send_mail_verify_code_from_view
 
 
 # Create your views here.
@@ -228,6 +229,12 @@ class MyPurchasesList(ListView, LoginRequiredMixin):
 def mail_code(request):
     user = request.user
     code = random_code()
-    Profile.objects.create(user=user, code=code)
-    return HttpResponseRedirect(reverse_lazy('confirm_code'))
+    profile = Profile.objects.filter(user=user)
+    if profile.exists():
+        profile.delete()
+        Profile.objects.create(user=user, code=code)
+
+        send_mail_verify_code_from_view.delay(user.username, code, user.email)
+
+        return HttpResponseRedirect(reverse_lazy('confirm_code'))
 

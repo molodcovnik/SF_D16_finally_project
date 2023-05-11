@@ -7,7 +7,7 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 
 from django.conf import settings
 from .models import Reply, Item
-from .tasks import send_mail_new_item, send_mail_reply_created
+from .tasks import send_mail_new_item, send_mail_reply_created, send_mail_reply_accepted
 
 @receiver(post_save, sender=Item)
 def item_created(instance, created, **kwargs):
@@ -37,28 +37,10 @@ def reply_created(instance, created, **kwargs):
 def reply_accepted(instance, **kwargs):
     if instance.accepted:
 
-        subject = f'{instance.user}, Ваш отклик был принят!'
+        customer = instance.user.username
+        cus_mail = instance.user.email
+        seller = instance.item.user.username
+        sel_mail = instance.item.user.email
 
-        text_content = (
-            f'Хорошие новости, Ваше предложение было принято!\n'
-            f'{instance.item.user} ждет от Вас письма для продолжения сделки, его почта: {instance.item.user.email}\n'
-            f'Лот: {instance.item.header}\n'
-            f'Ваше предложение: "{instance.text}"\n\n'
-            f'Ссылка на лот: http://127.0.0.1{instance.item.get_absolute_url()}'
-        )
-
-        html_content = (
-            f'Хорошие новости, Ваше предложение было принято!<br>'
-            f'{instance.item.user} ждет от Вас письма для продолжения сделки, его почта: {instance.item.user.email}<br>'
-            f'Лот: {instance.item.header}<br>'
-            f'Ваше предложение: "{instance.text}"<br><br>'
-            f'<a href="http://127.0.0.1:8000{instance.item.get_absolute_url()}">'
-            f'Ссылка на лот</a>'
-        )
-
-        from_email = settings.DEFAULT_FROM_EMAIL
-        to = instance.user.email
-
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        send_mail_reply_accepted.delay(customer, cus_mail, seller, sel_mail, instance.text,
+                                       instance.item.get_absolute_url(), instance.item.header)
