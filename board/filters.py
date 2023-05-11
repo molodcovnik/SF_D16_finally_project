@@ -30,7 +30,7 @@ class ReplyFilter(FilterSet):
 
     items = ModelMultipleChoiceFilter(
         field_name='item',
-        queryset=Item.objects.all(),
+        queryset=Item.objects.all().values_list('header'),
         label='Items',
         # empty_label='все категории',
         conjoined=False

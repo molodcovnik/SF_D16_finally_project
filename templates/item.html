@@ -6,7 +6,7 @@ Item
 
 
 {% block content %}
-    <h3>Продавец: {{item.user}}</h3>
+    <h3>Продавец: {{item.user|capfirst}}</h3>
     <h4>Заголовок: {{item.header|capfirst}}</h4>
     <h4>Категория: {{item.category.get}}</h4>
     <span>Дата объявления: {{ item.date|date:'d.m.Y' }}</span>

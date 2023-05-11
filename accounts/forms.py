@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.forms import Textarea
 
 from accounts.models import Profile
 
@@ -41,3 +42,9 @@ class ConfForm(forms.ModelForm):
         fields = [
             'code'
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+        self.fields['code'].widget = Textarea(attrs={'rows': 1})

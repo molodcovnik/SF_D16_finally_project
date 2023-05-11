@@ -237,4 +237,8 @@ def mail_code(request):
         send_mail_verify_code_from_view.delay(user.username, code, user.email)
 
         return HttpResponseRedirect(reverse_lazy('confirm_code'))
+    else:
+        Profile.objects.create(user=user, code=code)
+        send_mail_verify_code_from_view.delay(user.username, code, user.email)
+        return HttpResponseRedirect(reverse_lazy('confirm_code'))
 

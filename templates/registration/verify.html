@@ -2,15 +2,16 @@
 
 {% block content %}
 {% if not user.profile.is_confirmed %}
-    <h5>{{user.username}}</h5>
-    <p>{{user.id}}</p>
-    <form method="post">
+    <h5>{{user.username|capfirst}}, введите код подтверждения который пришел Вам на почту</h5>
+  <div class="col-1">
+    <form action="" id="verify" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Confirm">
+        <button form="verify" type="submit" class="btn btn-success">Подтвердить</button>
     </form>
-
-    <p>{{message}}</p>
+  </div>
+    <br>
+    <h5>{{message}}</h5>
 {% else %}
     <p>Ваш аккаунт уже подтвержден</p>
 {% endif %}
