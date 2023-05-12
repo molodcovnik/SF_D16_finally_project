@@ -231,9 +231,7 @@ def mail_code(request):
     code = random_code()
     profile = Profile.objects.filter(user=user)
     if profile.exists():
-        profile.delete()
-        Profile.objects.create(user=user, code=code)
-
+        code = user.profile.code
         send_mail_verify_code_from_view.delay(user.username, code, user.email)
 
         return HttpResponseRedirect(reverse_lazy('confirm_code'))
